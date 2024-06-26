@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: nexus-shared-services
+  title: Nexus Shared Services Terraform
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  description: Terraform module to create Nexus Shared Services including MongoDB, OpenAI.
+  tags:
+    - terraform
+    - azure
+spec:
+  type: terraform
+  lifecycle: production
+  owner: group:users-nexus-platform-maintainers
+  system: nexus.synechron.com

@@ -1,0 +1,78 @@
+include:
+  - template: Terraform/Base.gitlab-ci.yml
+  - project: 'synechron-code/cloud-devops/templates/pipeline-templates'
+    ref: v1.6.0
+    file:
+      - /templates/jobs/.backstage-publish-docs.yaml
+
+stages:
+  - validate
+  - test
+  - document
+  - build
+  - deploy
+
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}/terraform
+
+fmt:
+  extends: .terraform:fmt
+  needs: []
+
+validate:
+  extends: .terraform:validate
+  needs: []
+
+build_uat:
+  extends: .terraform:build
+  image: registry.gitlab.com/synechron-code/cloud-devops/image-terraformhelm/image-terraformhelm:ec3f383e
+  variables:
+    TF_STATE_NAME: dev
+    TF_VAR_env: uat
+    TF_VAR_subscription_id: d48a2080-1579-41aa-ae44-a5ba0e0d27e0
+    TF_VAR_client_id: $AZURE_UAT_CLIENT_ID
+    TF_VAR_client_secret: $AZURE_UAT_CLIENT_SECRET
+
+deploy_uat:
+  extends: .terraform:deploy
+  image: registry.gitlab.com/synechron-code/cloud-devops/image-terraformhelm/image-terraformhelm:ec3f383e
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  dependencies:
+    - build_uat
+  variables:
+    TF_STATE_NAME: dev
+    TF_VAR_env: uat
+    TF_VAR_subscription_id: d48a2080-1579-41aa-ae44-a5ba0e0d27e0
+    TF_VAR_client_id: $AZURE_UAT_CLIENT_ID
+    TF_VAR_client_secret: $AZURE_UAT_CLIENT_SECRET
+  environment:
+    name: $TF_STATE_NAME
+
+build_prod:
+  extends: .terraform:build
+  image: registry.gitlab.com/synechron-code/cloud-devops/image-terraformhelm/image-terraformhelm:ec3f383e
+  variables:
+    TF_STATE_NAME: prod
+    TF_VAR_env: prod
+    TF_VAR_subscription_id: d7c19132-39ce-47b9-ad2a-33dbcb9a79cc
+    TF_VAR_client_id: $AZURE_PROD_CLIENT_ID
+    TF_VAR_client_secret: $AZURE_PROD_CLIENT_SECRET
+
+deploy_prod:
+  extends: .terraform:deploy
+  image: registry.gitlab.com/synechron-code/cloud-devops/image-terraformhelm/image-terraformhelm:ec3f383e
+  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  dependencies:
+    - build_prod
+  variables:
+    TF_STATE_NAME: prod
+    TF_VAR_env: prod
+    TF_VAR_subscription_id: d7c19132-39ce-47b9-ad2a-33dbcb9a79cc
+    TF_VAR_client_id: $AZURE_PROD_CLIENT_ID
+    TF_VAR_client_secret: $AZURE_PROD_CLIENT_SECRET
+  environment:
+    name: $TF_STATE_NAME

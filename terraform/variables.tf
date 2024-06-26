@@ -5,13 +5,13 @@ variable "tags" {
   EOF
   default = {
     "terraform" : "nexus-shared-services"
-    "Client" : ""
+    "Client" : "internal"
     "BU" : "UK"
-    "Owner" : ""
-    "App" : ""
-    "Contact1" : ""
-    "Contact2" : ""
-    "Contact3" : ""
+    "Owner" : "cloudpracticeadmin@synechron.com"
+    "App" : "nexus.synechron.com"
+    "Contact1" : "Ivan.Peric@synechron.com"
+    "Contact2" : "Paul.Jones@synechron.com"
+    "Contact3" : "David.Sewell@synechron.com"
   }
 }
 variable "env" {

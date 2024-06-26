@@ -13,7 +13,7 @@ module "cosmos" {
   collection_index_uniqueness = true
 
   # For UAT access
-  ip_range_filter                   = var.env == "prod" ? "" : ""
+  ip_range_filter                   = var.env == "prod" ? "" : "93.86.67.155,188.2.103.55,188.2.45.61,167.98.11.196,104.42.195.92,40.76.54.131,52.176.6.30,52.169.50.45,52.187.184.26"
   is_virtual_network_filter_enabled = var.env == "prod" ? true : false
   public_network_access_enabled     = var.env == "prod" ? false : true
 
